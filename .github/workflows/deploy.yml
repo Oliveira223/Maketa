@@ -20,16 +20,23 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            set -euo pipefail
             echo "[INFO] Criando backup do banco..."
             mkdir -p ~/backups
             docker exec maketa_db pg_dump -U admin maketa_db > ~/backups/maketa_backup_$(date +'%Y%m%d_%H%M%S').dump
 
             echo "[INFO] Atualizando aplicação..."
-            cd ~/MAKETA
+            cd ~/Maketa/MAKETA
             git reset --hard
             git pull origin main
 
-            echo "[INFO] Reconstruindo containers..."
-            docker compose up -d --build
+            echo "[INFO] Derrubando containers (mantendo volumes)..."
+            docker compose down
+
+            echo "[INFO] Subindo containers (build + remove órfãos)..."
+            docker compose up -d --build --remove-orphans
+
+            echo "[INFO] Verificando saúde da aplicação..."
+            curl -sSf http://localhost:5001/health | jq . || (echo "[ERRO] Health check falhou" && exit 1)
 
             echo "[INFO] Deploy finalizado com sucesso!"
