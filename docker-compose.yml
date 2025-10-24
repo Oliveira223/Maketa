@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  maketa_app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: maketa_app
+    restart: always
+    ports:
+      - "5001:5000"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - maketa_db
+    volumes:
+      - ./backend:/app
+
+  maketa_db:
+    image: postgres:16
+    container_name: maketa_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    env_file:
+      - ./backend/.env
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
