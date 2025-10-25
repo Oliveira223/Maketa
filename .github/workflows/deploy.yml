@@ -19,25 +19,68 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          script_stop: true
           script: |
             set -euo pipefail
-            echo "[INFO] Criando backup do banco..."
-            mkdir -p ~/backups
-            docker exec maketa_db pg_dump -U admin maketa_db > ~/backups/maketa_backup_$(date +'%Y%m%d_%H%M%S').dump
 
-            echo "[INFO] Atualizando aplicação..."
-            cd ~/Maketa/MAKETA
-            git reset --hard
-            git pull origin main
+            REPO_DIR="$HOME/Maketa/MAKETA"
+            HEALTH_URL="http://127.0.0.1:5001/health"
+
+            echo "[INFO] Verificando Docker e Compose..."
+            command -v docker >/dev/null 2>&1 || { echo "[ERRO] Docker não instalado no VPS"; exit 1; }
+            if docker compose version >/dev/null 2>&1; then
+              COMPOSE="docker compose"
+            elif docker-compose version >/dev/null 2>&1; then
+              COMPOSE="docker-compose"
+            else
+              echo "[ERRO] Docker Compose não instalado (plugin ou v1)"
+              exit 1
+            fi
+
+            echo "[INFO] Preparando repositório em $REPO_DIR..."
+            if [ -d "$REPO_DIR/.git" ]; then
+              cd "$REPO_DIR"
+              git fetch --all --prune
+              git reset --hard
+              git pull origin main
+            else
+              echo "[ERRO] Repositório não encontrado em $REPO_DIR. Faça o primeiro clone manualmente e configure 'origin'."
+              exit 1
+            fi
+
+            echo "[INFO] Criando backup do banco (se disponível)..."
+            mkdir -p "$HOME/backups"
+            if docker ps -q -f name=maketa_db >/dev/null 2>&1; then
+              docker exec maketa_db pg_dump -U admin maketa_db > "$HOME/backups/maketa_$(date +'%Y%m%d_%H%M%S').dump"
+            else
+              echo "[WARN] Container maketa_db não está rodando; pulando backup"
+            fi
 
             echo "[INFO] Derrubando containers (mantendo volumes)..."
-            docker compose down
+            $COMPOSE down
 
             echo "[INFO] Subindo containers (build + remove órfãos)..."
-            docker compose up -d --build --remove-orphans
+            $COMPOSE up -d --build --remove-orphans
+
+            echo "[INFO] Aguardando aplicação ficar saudável..."
+            for i in $(seq 1 60); do
+              if curl -sSf "$HEALTH_URL" >/dev/null; then
+                break
+              fi
+              sleep 2
+            done
 
             echo "[INFO] Verificando saúde da aplicação..."
-            HEALTH_JSON=$(curl -sSf http://localhost:5001/health) || (echo "[ERRO] Health endpoint indisponível" && exit 1)
+            if ! HEALTH_JSON=$(curl -sS --retry 10 --retry-connrefused --retry-delay 2 "$HEALTH_URL"); then
+              echo "[ERRO] Health endpoint indisponível"
+              echo "[INFO] Status dos serviços:"
+              $COMPOSE ps
+              echo "[INFO] Últimos logs do maketa_app:"
+              docker logs --tail=120 maketa_app || true
+              echo "[INFO] Últimos logs do maketa_db:"
+              docker logs --tail=60 maketa_db || true
+              exit 1
+            fi
             echo "$HEALTH_JSON"
             if command -v jq >/dev/null 2>&1; then
               APP_STATUS=$(echo "$HEALTH_JSON" | jq -r '.app')
@@ -45,7 +88,7 @@ jobs:
               [ "$APP_STATUS" = "ok" ] && [ "$DB_STATUS" = "ok" ] || (echo "[ERRO] Health check falhou (app=$APP_STATUS, db=$DB_STATUS)" && exit 1)
             else
               echo "[WARN] jq não encontrado; validando via grep"
-              echo "$HEALTH_JSON" | grep -q '\"app\":\"ok\"' && echo "$HEALTH_JSON" | grep -q '\"db\":\"ok\"' || (echo "[ERRO] Health check falhou" && exit 1)
+              echo "$HEALTH_JSON" | grep -q '"app":"ok"' && echo "$HEALTH_JSON" | grep -q '"db":"ok"' || (echo "[ERRO] Health check falhou" && exit 1)
             fi
 
             echo "[INFO] Deploy finalizado com sucesso!"

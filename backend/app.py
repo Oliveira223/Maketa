@@ -289,5 +289,8 @@ def update_maquete(mid: int):
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
+    debug_env = os.environ.get('FLASK_DEBUG') or os.environ.get('DEBUG')
+    debug_flag = str(debug_env).strip().lower() in ('1', 'true', 'yes', 'on')
     print(f"[INFO] Servidor iniciado em http://localhost:{port}")
-    app.run(host='0.0.0.0', port=port, debug=True)
+    print(f"[INFO] Debug: {'on' if debug_flag else 'off'}")
+    app.run(host='0.0.0.0', port=port, debug=debug_flag)
