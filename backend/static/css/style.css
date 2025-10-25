@@ -1,0 +1,45 @@
+/* =============================
+   Estilos padrão (global)
+   ============================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  color-scheme: light only;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #ffffff;
+  overflow-x: hidden;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  margin: 2rem;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* =============================
+   Estados (index)
+   ============================= */
+.ok {
+  color: #16a34a;
+}
+
+.warn {
+  color: #ca8a04;
+}
+
+.err {
+  color: #dc2626;
+}

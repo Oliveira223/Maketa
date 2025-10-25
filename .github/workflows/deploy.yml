@@ -37,6 +37,15 @@ jobs:
             docker compose up -d --build --remove-orphans
 
             echo "[INFO] Verificando saúde da aplicação..."
-            curl -sSf http://localhost:5001/health | jq . || (echo "[ERRO] Health check falhou" && exit 1)
+            HEALTH_JSON=$(curl -sSf http://localhost:5001/health) || (echo "[ERRO] Health endpoint indisponível" && exit 1)
+            echo "$HEALTH_JSON"
+            if command -v jq >/dev/null 2>&1; then
+              APP_STATUS=$(echo "$HEALTH_JSON" | jq -r '.app')
+              DB_STATUS=$(echo "$HEALTH_JSON" | jq -r '.db')
+              [ "$APP_STATUS" = "ok" ] && [ "$DB_STATUS" = "ok" ] || (echo "[ERRO] Health check falhou (app=$APP_STATUS, db=$DB_STATUS)" && exit 1)
+            else
+              echo "[WARN] jq não encontrado; validando via grep"
+              echo "$HEALTH_JSON" | grep -q '\"app\":\"ok\"' && echo "$HEALTH_JSON" | grep -q '\"db\":\"ok\"' || (echo "[ERRO] Health check falhou" && exit 1)
+            fi
 
             echo "[INFO] Deploy finalizado com sucesso!"

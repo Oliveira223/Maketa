@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <title>Maketa</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Maketa</title>
-  <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 2rem; }
-    .ok { color: #16a34a; }
-    .warn { color: #ca8a04; }
-    .err { color: #dc2626; }
-  </style>
+  <meta name="theme-color" content="#1c1c1c" />
+  <meta name="color-scheme" content="light" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-  <h1>Maketa — site base!</h1>
+  <h1>Maketa — site base</h1>
   <p>Flask rodando. Verifique o estado do banco em <code>/health</code>.</p>
 </body>
 </html>

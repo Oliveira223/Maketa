@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <title>Maketa | Painel</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1c1c1c" />
+  <meta name="color-scheme" content="light" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <script defer src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</head>
+<body data-cloudinary-cloud-name="{{ cloudinary_cloud_name or '' }}" data-cloudinary-upload-preset="{{ cloudinary_upload_preset or '' }}">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">Maketa Dashboard</div>
+    <nav class="menu">
+      <button class="menu-item active" data-target="view-cadastro">Cadastro</button>
+      <button class="menu-item" data-target="view-maquetes">Maquetes</button>
+      <button class="menu-item" data-target="view-info">Info</button>
+    </nav>
+  </aside>
+
+  <!-- Conteúdo principal -->
+  <main class="content">
+    <!-- View Cadastro -->
+    <section id="view-cadastro" class="view active">
+      <header class="view-header">
+        <h1>Cadastro</h1>
+        <div class="actions">
+          <span id="db-status" class="chip muted">DB: verificando…</span>
+          <button type="button" id="btn-limpar-form" class="secondary">Limpar Formulário</button>
+        </div>
+      </header>
+
+      <form id="create-form" class="form-grid">
+        <input type="text" name="nome" placeholder="Nome" required>
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
+          <input type="text" name="escala" placeholder="Escala">
+          <input type="number" step="0.01" name="peso" placeholder="Peso (kg)">
+          <input type="text" name="proprietario" placeholder="Proprietário">
+        </div>
+        <input type="text" name="projeto" placeholder="Projeto">
+
+        <!-- Grupo: Imagem Principal -->
+        <div class="grupo-imagem-principal">
+          <div class="coluna-imagem">
+            <label>Imagem principal:</label>
+            <input type="file" id="file-imagem-principal" accept="image/*">
+            <input type="url" name="imagem_principal_url" id="input-imagem-principal" placeholder="URL gerada (secure_url)">
+          </div>
+          <div class="coluna-preview">
+            <img id="preview-imagem-principal" class="img-preview" alt="">
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="primary">Criar Maquete</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- View Maquetes -->
+    <section id="view-maquetes" class="view">
+      <header class="view-header">
+        <h1>Maquetes registradas</h1>
+        <div class="actions">
+          <button type="button" id="btn-recarregar-maquetes" class="secondary">Recarregar</button>
+        </div>
+      </header>
+
+      <div class="grid-blocos">
+        <!-- Bloco: Cards -->
+        <div class="bloco">
+          <div class="bloco-head">
+            <h2>Cards das maquetes</h2>
+          </div>
+          <div id="maquetes-cards" class="cards"></div>
+        </div>
+
+        <!-- Bloco: Tabela -->
+        <div class="bloco">
+          <div class="bloco-head">
+            <h2>Tabela</h2>
+          </div>
+          <div class="table-wrapper">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nome</th>
+                  <th>Escala</th>
+                  <th>Proprietário</th>
+                  <th>Imagem</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="maquetes-body">
+                <tr><td colspan="6" class="muted">Use “Recarregar” para listar as maquetes.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- View Info -->
+    <section id="view-info" class="view">
+      <header class="view-header">
+        <h1>Info</h1>
+        <div class="actions">
+          <button type="button" id="btn-recarregar-info" class="secondary">Recarregar</button>
+        </div>
+      </header>
+      <div class="info-cards">
+        <div class="info-card">
+          <h3>Total de maquetes</h3>
+          <div id="kpi-total">0</div>
+        </div>
+        <div class="info-card">
+          <h3>Com imagem principal</h3>
+          <div id="kpi-com-imagem">0</div>
+        </div>
+        <div class="info-card">
+          <h3>Sem imagem</h3>
+          <div id="kpi-sem-imagem">0</div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
