@@ -18,20 +18,52 @@
 }
 
 html {
-	margin: 0;
-	padding: 0;
   scroll-behavior: smooth;
-
 }
 
-body{
+body {
   background-color: white;
+  background-repeat: repeat-y;
+  background-size: 100%;
+  background-position: center;
+  overflow-x: hidden;
 }
+
+html,
+body {
+  height: 100%;
+  overflow-x: hidden;
+  position: relative;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:visited {
+  color: inherit;
+}
+
+a:active,
+a:hover {
+  color: inherit;
+}
+
+html.no-scroll,
+body.no-scroll {
+  overflow: hidden;
+  min-width: 100%;
+}
+
 
 header{
   background-color: rgb(0, 0, 0);
   height: 100vh;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 0;
 }
 
 .logo{
@@ -44,6 +76,7 @@ header{
 .backg {
   width: 100%;
   height: 100%;
+  margin-top: -5px;
   display: block;
   padding: 0;
   object-fit: cover; 
@@ -52,7 +85,9 @@ header{
 .backg-wrapper {
   position: relative;
   overflow: hidden;
-  margin: 0; 
+  margin: 0;
+  flex: 1;
+  min-height: 0;
 }
 
 .backg-wrapper::before {
@@ -62,11 +97,12 @@ header{
   pointer-events: none;
   background: linear-gradient(
     to bottom,
-    rgb(0, 0, 5) 0%,
-    rgba(0, 0, 0, 0.9) 5%,
-    rgba(0, 0, 0, 0.8) 18%,
-    rgba(0, 0, 0, 0.8) 82%,
-    rgb(0, 0, 0) 100%
+    rgba(0,0,0) 0%,
+    
+    rgba(0,0,0,0.85) 8%,
+    rgba(0,0,0,0.85) 40%,
+    rgba(0,0,0,0.85) 75%,
+    rgba(0,0,0,1) 100%
   );
 }
 

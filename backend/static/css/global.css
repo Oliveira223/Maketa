@@ -1,0 +1,65 @@
+/* ================================
+   Botão do whatsapp
+   ================================ */
+.whatsapp-float {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background-color: #25D366;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.1);
+}
+
+.whatsapp-float img {
+  width: 30px;
+  height: 30px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ==================================== 
+    DESKTOP 
+    =================================== */
+
+@media (min-width: 768px) {
+
+  /* ================================
+   Botão do whatsapp
+   ================================ */
+.whatsapp-float {
+  bottom: 70px;
+  right: 70px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.whatsapp-float img {
+  width: 30px;
+  height: 30px;
+}
+}
