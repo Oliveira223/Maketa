@@ -1,0 +1,30 @@
+# Entrar no VPS
+ssh deploy@161.97.77.203
+
+# Entrar no banco de dados
+docker exec -it maketa_db psql -U admin -d maketa_db
+
+# Testar site localmente
+> Abrir tunel ssh
+    ssh -L 5434:127.0.0.1:5434 deploy@161.97.77.203
+
+> Iniciar app
+    python backend/app.py
+
+OU (E:\PROJECTS\WebSites\Maketa\MAKETA\.venv\Scripts\python.exe backend\app.py)
+
+# Endereço temporario do site
+http://161.97.77.203:5001
+
+
+
+
+
+
+# Logs (no VPS)
+docker logs -f maketa_app
+docker logs -f maketa_db
+
+# Backup do banco (VPS)
+mkdir -p ~/backups
+docker exec maketa_db pg_dump -U admin maketa_db > ~/backups/maketa_$(date +'%Y%m%d_%H%M%S').dump

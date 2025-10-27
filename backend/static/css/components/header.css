@@ -1,0 +1,10 @@
+/* Header simples: ajuste altura e cor aqui */
+.site-header {
+  height: 10rem; /* ajuste conforme necessário */
+  width: 100%;
+  background-color: #1c1c1c; /* cor de fundo desejada */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

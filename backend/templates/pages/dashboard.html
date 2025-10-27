@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <title>Maketa | Painel</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1c1c1c" />
+  <meta name="color-scheme" content="light" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <script defer src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+</head>
+<body data-cloudinary-cloud-name="{{ cloudinary_cloud_name or '' }}" data-cloudinary-upload-preset="{{ cloudinary_upload_preset or '' }}">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">Dashboard</div>
+    <nav class="menu">
+      <button class="menu-item active" data-target="view-cadastro">Cadastro</button>
+      <button class="menu-item" data-target="view-maquetes">Maquetes</button>
+      <button class="menu-item" data-target="view-info">Info</button>
+    </nav>
+  </aside>
+
+  <!-- Conteúdo principal -->
+  
+<main class="content">
+  {% set header_title = 'Dashboard' %}
+{% include 'components/_header.html' %}
+    <!-- View Cadastro -->
+    <section id="view-cadastro" class="view active">
+      <header class="view-header">
+        <h1>Cadastro</h1>
+        <div class="actions">
+          <span id="db-status" class="chip muted">DB: verificando…</span>
+          <button type="button" id="btn-limpar-form" class="secondary">Limpar Formulário</button>
+        </div>
+      </header>
+
+      <form id="create-form" class="form-grid">
+      <!-- Seção: Dados principais -->
+      <div class="form-section">
+        <h3>Dados principais</h3>
+
+        <div class="field">
+          <label for="nome">Nome</label>
+          <input id="nome" type="text" name="nome" placeholder="Nome" required>
+        </div>
+
+        <div class="field row-3">
+          <div>
+            <label for="escala">Escala</label>
+            <input id="escala" type="text" name="escala" placeholder="Escala">
+          </div>
+          <div>
+            <label for="peso">Peso (kg)</label>
+            <input id="peso" type="number" step="0.01" name="peso" placeholder="Peso">
+          </div>
+          <div>
+            <label for="proprietario">Proprietário</label>
+            <input id="proprietario" type="text" name="proprietario" placeholder="Proprietário">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="projeto">Projeto</label>
+          <input id="projeto" type="text" name="projeto" placeholder="Projeto">
+        </div>
+      </div>
+
+      <!-- Seção: Localização / Data / Dimensões -->
+      <div class="form-section grid-3">
+        <fieldset>
+          <legend>Localização</legend>
+          <div class="field-inline">
+            <div>
+              <label for="cidade">Cidade</label>
+              <input id="cidade" type="text" name="cidade" placeholder="Cidade">
+            </div>
+            <div>
+              <label for="estado">UF</label>
+              <input id="estado" type="text" name="estado" placeholder="UF" maxlength="2" style="text-transform: uppercase;">
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Data</legend>
+          <div class="field-inline">
+            <div>
+              <label for="mes">Mês</label>
+              <input id="mes" type="number" name="mes" placeholder="Mês (1-12)" min="1" max="12">
+            </div>
+            <div>
+              <label for="ano">Ano</label>
+              <input id="ano" type="number" name="ano" placeholder="Ano" min="1900" max="2100">
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Dimensões (cm)</legend>
+          <div class="field-inline">
+            <div>
+              <label for="largura_cm">Largura</label>
+              <input id="largura_cm" type="number" name="largura_cm" placeholder="Largura (cm)">
+            </div>
+            <div>
+              <label for="altura_cm">Altura</label>
+              <input id="altura_cm" type="number" name="altura_cm" placeholder="Altura (cm)">
+            </div>
+            <div>
+              <label for="comprimento_cm">Comprimento</label>
+              <input id="comprimento_cm" type="number" name="comprimento_cm" placeholder="Comprimento (cm)">
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
+      <!-- Seção: Imagem principal -->
+      <div class="form-section">
+        <h3>Imagem principal</h3>
+        <div class="grupo-imagem-principal styled-imagem">
+          <div class="coluna-imagem">
+            <label class="label-file">Imagem principal</label>
+            <div class="file-input-wrapper">
+              <button type="button" class="btn-upload">Selecionar arquivo</button>
+              <input type="file" id="file-imagem-principal" accept="image/*">
+              <input type="url" name="imagem_principal_url" id="input-imagem-principal" placeholder="URL gerada (secure_url)">
+              <input type="hidden" name="imagem_principal_public_id" id="input-public-id-principal">
+            </div>
+          </div>
+          <div class="coluna-preview">
+            <div class="thumb">
+              <img id="preview-imagem-principal" class="img-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='220'><rect width='100%' height='100%' fill='%23f2f2f2'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23999' font-size='14'>Sem imagem</text></svg>" alt="Preview imagem principal" loading="lazy" style="width:100%; height:100%; object-fit:cover;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seção: Imagens secundárias -->
+      <div class="form-section">
+        <h3>Imagens secundárias</h3>
+        <div class="grupo-secundarias styled-imagens">
+          <div class="coluna-imagem">
+            <label class="label-file">Galeria</label>
+            <div class="file-input-wrapper">
+              <button type="button" class="btn-upload">Selecionar imagens</button>
+              <input type="file" id="file-imagens-secundarias" accept="image/*" multiple>
+              <small class="muted">Selecione múltiplas imagens; fazemos upload automático (Cloudinary).</small>
+            </div>
+          </div>
+          <div class="coluna-preview">
+            <div id="preview-secundarias" class="thumbs-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seção: Info adicional -->
+      <div class="form-section">
+        <h3>Informações</h3>
+        <div class="field">
+          <label for="info">Descrição / Observações</label>
+          <textarea id="info" name="info" placeholder="Informações adicionais"></textarea>
+        </div>
+      </div>
+
+      <div class="actions form-actions">
+        <button type="submit" class="primary">Criar Maquete</button>
+      </div>
+    </form>
+    </section>
+
+    <!-- View Maquetes -->
+    <section id="view-maquetes" class="view">
+      <header class="view-header">
+        <h1>Maquetes registradas</h1>
+        <div class="actions">
+          <button type="button" id="btn-recarregar-maquetes" class="secondary">Recarregar</button>
+        </div>
+      </header>
+
+      <div class="grid-blocos">
+        <!-- Bloco: Cards -->
+        <div class="bloco">
+          <div class="bloco-head">
+            <h2>Cards das maquetes</h2>
+          </div>
+          <div id="maquetes-cards" class="cards"></div>
+        </div>
+
+       
+    <!-- ====================
+     INFO 
+     ======================== -->
+    <section id="view-info" class="view">
+      <header class="view-header">
+        <h1>Info</h1>
+        <div class="actions">
+          <button type="button" id="btn-recarregar-info" class="secondary">Recarregar</button>
+        </div>
+      </header>
+      <div class="info-cards">
+        <div class="info-card">
+          <h3>Total de maquetes</h3>
+          <div id="kpi-total">0</div>
+        </div>
+        <div class="info-card">
+          <h3>Com imagem principal</h3>
+          <div id="kpi-com-imagem">0</div>
+        </div>
+        <div class="info-card">
+          <h3>Sem imagem</h3>
+          <div id="kpi-sem-imagem">0</div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

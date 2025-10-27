@@ -1,45 +1,72 @@
-/* =============================
-   Estilos padrão (global)
-   ============================= */
+/* ================================
+   Estilos padrão - MOBILE FIRST
+   ================================ */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   -webkit-tap-highlight-color: transparent;
+
 }
 
 :root {
-  color-scheme: light only;
+  color-scheme: dark only;
 }
 
 html {
+	margin: 0;
+	padding: 0;
   scroll-behavior: smooth;
+
 }
 
-body {
-  background-color: #ffffff;
-  overflow-x: hidden;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  margin: 2rem;
+body{
+  background-color: white;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
+header{
+  background-color: rgb(0, 0, 0);
+  height: 100vh;
+  padding: 0;
 }
 
-/* =============================
-   Estados (index)
-   ============================= */
-.ok {
-  color: #16a34a;
+.logo{
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
-.warn {
-  color: #ca8a04;
+
+.backg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  padding: 0;
+  object-fit: cover; 
 }
 
-.err {
-  color: #dc2626;
+.backg-wrapper {
+  position: relative;
+  overflow: hidden;
+  margin: 0; 
 }
+
+.backg-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0; 
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgb(0, 0, 5) 0%,
+    rgba(0, 0, 0, 0.9) 5%,
+    rgba(0, 0, 0, 0.8) 18%,
+    rgba(0, 0, 0, 0.8) 82%,
+    rgb(0, 0, 0) 100%
+  );
+}
+
